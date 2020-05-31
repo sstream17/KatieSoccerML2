@@ -106,10 +106,8 @@ public class KatieSoccerAgent : Agent
             if (TeamPieces[i] != null)
             {
                 observation = NormalizePosition(TeamPieces[0].transform.position);
-                Debug.Log(TeamPieces[0].transform.position);
             }
 
-            Debug.Log(observation);
             sensor.AddObservation(observation);
         }
 
@@ -120,10 +118,8 @@ public class KatieSoccerAgent : Agent
             if (OpposingPieces[i] != null)
             {
                 observation = NormalizePosition(OpposingPieces[0].transform.position);
-                Debug.Log(OpposingPieces[0].transform.position);
             }
 
-            Debug.Log(observation);
             sensor.AddObservation(observation);
         }
 
