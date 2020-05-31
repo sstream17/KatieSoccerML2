@@ -3,6 +3,7 @@ using System.Collections;
 using TMPro;
 using UnityEngine;
 using Unity.MLAgents.Sensors;
+using Unity.MLAgents.Policies;
 
 public class KatieSoccerAgent : Agent
 {
@@ -22,7 +23,6 @@ public class KatieSoccerAgent : Agent
     public bool AllowShot = false;
 
     private GameObject[] allPieces;
-    private int numberOfPieces = 3;
     private float goalReward = 100f;
     private float minStrength = 0.9f;
     private float maxStrength = 5f;
@@ -45,17 +45,26 @@ public class KatieSoccerAgent : Agent
     private void Start()
     {
         teamRBs = new Rigidbody[TeamPieces.Length];
-        allPieces = new GameObject[TeamPieces.Length + 1];
+        allPieces = new GameObject[TeamPieces.Length + OpposingPieces.Length + 1];
         int i;
+        int j = 0;
         for (i = 0; i < TeamPieces.Length; i++)
         {
             GameObject piece = TeamPieces[i];
             Rigidbody rb = piece.GetComponent<Rigidbody>();
             teamRBs[i] = rb;
-            allPieces[i] = piece;
+            allPieces[j] = piece;
+            j++;
         }
 
-        allPieces[i] = Ball;
+        for (i = 0; i < OpposingPieces.Length; i++)
+        {
+            GameObject piece = OpposingPieces[i];
+            allPieces[j] = piece;
+            j++;
+        }
+
+        allPieces[j] = Ball;
     }
 
     void Update()
@@ -99,31 +108,33 @@ public class KatieSoccerAgent : Agent
 
     public override void CollectObservations(VectorSensor sensor)
     {
-        for (int i = 0; i < numberOfPieces; i++)
+        var behaviorParameters = gameObject.GetComponent<BehaviorParameters>();
+
+        for (int i = 0; i < TeamPieces.Length; i++)
         {
             var observation = new Vector2(0f, 0f);
 
             if (TeamPieces[i] != null)
             {
-                observation = NormalizePosition(TeamPieces[0].transform.position);
+                observation = NormalizePosition(TeamPieces[i].transform.position, behaviorParameters.TeamId);
             }
 
             sensor.AddObservation(observation);
         }
 
-        for (int i = 0; i < numberOfPieces; i++)
+        for (int i = 0; i < OpposingPieces.Length; i++)
         {
             var observation = new Vector2(0f, 0f);
 
             if (OpposingPieces[i] != null)
             {
-                observation = NormalizePosition(OpposingPieces[0].transform.position);
+                observation = NormalizePosition(OpposingPieces[i].transform.position, GetOpposingTeamId(behaviorParameters.TeamId));
             }
 
             sensor.AddObservation(observation);
         }
 
-        var ballObservation = NormalizePosition(Ball.transform.position);
+        var ballObservation = NormalizePosition(Ball.transform.position, behaviorParameters.TeamId);
         sensor.AddObservation(ballObservation);
     }
 
@@ -145,9 +156,15 @@ public class KatieSoccerAgent : Agent
         AddReward(-1f / Academy.TimePenalty);
     }
 
-    private Vector2 NormalizePosition(Vector2 position)
+    private int GetOpposingTeamId(int thisTeamId)
     {
-        float x = (-position.x / (minX - maxX)) + normX;
+        return thisTeamId == 1 ? 2 : 1;
+    }
+
+    private Vector2 NormalizePosition(Vector2 position, int teamId)
+    {
+        var direction = teamId == 2 ? 1 : -1;
+        float x = (direction * (position.x / (minX - maxX))) + normX;
         float y = (position.y / (minY - maxY)) + normY;
         return new Vector2(x, y);
     }
