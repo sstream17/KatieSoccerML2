@@ -715,7 +715,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2db31cf989a7ba5479dfff6e9ee93840, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ScoringAgent: {fileID: 0}
+  ScoringAgent: {fileID: 1163350365482117810}
   DefendingAgent: {fileID: 4085635250268635456}
 --- !u!1 &4085635251673199786
 GameObject:
@@ -911,7 +911,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ScoringAgent: {fileID: 4085635250268635456}
-  DefendingAgent: {fileID: 0}
+  DefendingAgent: {fileID: 1163350365482117810}
 --- !u!1 &4085635251837380716
 GameObject:
   m_ObjectHideFlags: 0
@@ -1393,7 +1393,7 @@ MonoBehaviour:
   agentParameters:
     maxStep: 0
   hasUpgradedFromAgentParameters: 1
-  MaxStep: 0
+  MaxStep: 7500
   Academy: {fileID: 4290253317900276003}
   OpposingAgent: {fileID: 4085635250268635456}
   TeamPieces:
